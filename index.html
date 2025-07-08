@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GitHub Leak Finder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white p-6">
+  <div class="max-w-xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-center">🔍 GitHub Leak Finder</h1>
+
+    <form id="searchForm" class="space-y-4">
+      <input id="keyword" class="w-full p-2 bg-gray-800 rounded" placeholder="Keyword (e.g. API_KEY=)" required>
+
+      <select id="language" class="w-full p-2 bg-gray-800 rounded">
+        <option value="Python">Python</option>
+        <option value="JavaScript">JavaScript</option>
+        <option value="Python+language:JavaScript">Python + JavaScript</option>
+      </select>
+
+      <select id="months" class="w-full p-2 bg-gray-800 rounded">
+        <option value="1">Last 1 Month</option>
+        <option value="3" selected>Last 3 Months</option>
+        <option value="6">Last 6 Months</option>
+        <option value="12">Last 1 Year</option>
+      </select>
+
+      <button type="submit" class="w-full bg-blue-600 p-2 rounded">Generate Search</button>
+    </form>
+
+    <div id="result" class="mt-6 p-4 bg-gray-800 rounded hidden">
+      <h2 class="text-xl font-semibold mb-2">Search URL:</h2>
+      <a id="searchLink" href="#" class="text-blue-400 underline break-all" target="_blank">GitHub Search</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('searchForm');
+    const result = document.getElementById('result');
+    const searchLink = document.getElementById('searchLink');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const keyword = document.getElementById('keyword').value.trim();
+      const language = document.getElementById('language').value;
+      const months = parseInt(document.getElementById('months').value);
+
+      const date = new Date();
+      date.setMonth(date.getMonth() - months);
+      const isoDate = date.toISOString().split('T')[0];
+
+      const encodedQuery = encodeURIComponent(`${keyword} language:${language} created:>${isoDate}`);
+      const finalURL = `https://github.com/search?q=${encodedQuery}&type=code`;
+
+      searchLink.href = finalURL;
+      searchLink.textContent = finalURL;
+      result.classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
